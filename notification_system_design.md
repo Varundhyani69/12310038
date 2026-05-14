@@ -362,3 +362,89 @@ Caching improves speed and reduces database load, but it can show slightly old d
 
 I would use MySQL as the source of truth, a short-lived cache for repeated reads, pagination for large lists, and Socket.IO push for new notifications. This keeps the design simple while still solving the performance problem.
 
+## Stage 5
+
+The current implementation can become slow when notifications are sent to a very large number of students because email sending and database insertion are happening together.
+
+If email sending fails in between, some students may receive notifications while others may not. Also, sending thousands of emails one by one inside the same request can increase response time.
+
+### Better Approach
+
+First save all notifications in the database.
+After saving, send emails separately.
+Realtime notifications can be pushed to connected students using Socket.IO.
+
+### Example Logic
+
+function notifyStudents(studentIds, message) {
+
+    const notifications = [];
+
+    for (const studentId of studentIds) {
+        notifications.push({
+            student_id: studentId,
+            message: message,
+            notification_type: "Placement"
+        });
+    }
+
+    saveNotificationsInBulk(notifications);
+
+    for (const studentId of studentIds) {
+        sendEmail(studentId, message);
+    }
+
+    emitRealtimeNotification(studentIds, message);
+}
+
+### Why This Is Better
+
+Bulk insert is faster than inserting one notification at a time.
+Notifications are safely stored even if email sending fails later.
+Connected users can still receive realtime updates instantly.
+
+## Stage 6
+
+Notifications can be shown based on priority so that important updates appear first.
+
+Priority order:
+
+- Unread Placement notifications
+- Unread Result notifications
+- Unread Event notifications
+- Read notifications
+
+### Example Logic
+
+function sortNotifications(notifications) {
+
+    const priority = {
+        Placement: 3,
+        Result: 2,
+        Event: 1
+    };
+
+    notifications.sort((a, b) => {
+
+        if (a.is_read !== b.is_read) {
+            return a.is_read - b.is_read;
+        }
+
+        if (priority[a.notification_type] !== priority[b.notification_type]) {
+            return (
+                priority[b.notification_type] -
+                priority[a.notification_type]
+            );
+        }
+
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    return notifications.slice(0, 10);
+}
+
+### Why This Works
+
+Unread notifications appear before read notifications.
+Placement notifications are treated as more important.
+Latest notifications appear first inside the same priority group.
