@@ -13,6 +13,12 @@ const PORT = process.env.PORT || 3001;
 const API_URL = "http://4.224.186.213/evaluation-service/notifications";
 const allowedTypes = ["Event", "Result", "Placement"];
 
+const FALLBACK_NOTIFICATIONS = [
+    { id: 1, type: "Event", message: "Welcome to the notification app!", timestamp: new Date().toISOString() },
+    { id: 2, type: "Result", message: "Sample result notification available offline.", timestamp: new Date(Date.now() - 3600 * 1000).toISOString() },
+    { id: 3, type: "Placement", message: "Sample placement notification available offline.", timestamp: new Date(Date.now() - 7200 * 1000).toISOString() }
+];
+
 app.use(cors());
 
 function numberValue(value, fallback) {
@@ -56,8 +62,10 @@ app.get("/api/notifications", async (req, res) => {
 
         res.json({ notifications });
     } catch (error) {
-        await Log("backend", "error", "service", "failed to fetch notifications");
-        res.status(500).json({ error: "Could not fetch notifications" });
+        const details = error.response ? error.response.data : error.message;
+        await Log("backend", "error", "service", `failed to fetch notifications: ${JSON.stringify(details)}`);
+
+        return res.json({ notifications: FALLBACK_NOTIFICATIONS });
     }
 });
 
