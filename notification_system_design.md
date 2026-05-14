@@ -448,3 +448,33 @@ function sortNotifications(notifications) {
 Unread notifications appear before read notifications.
 Placement notifications are treated as more important.
 Latest notifications appear first inside the same priority group.
+
+## Stage 7
+
+For the frontend implementation, I created a simple React Vite app in the `notification_app_fe` folder. It runs on `http://localhost:3000` and uses Material UI for basic components.
+
+The UI is kept basic on purpose. It has:
+
+- type filter for All, Event, Result, and Placement
+- limit input
+- page input
+- All notifications view
+- Priority view
+- new/viewed status
+- Mark viewed button
+
+The Priority view uses the same simple priority idea from Stage 6. Unread notifications come first, then Placement, Result, and Event order is used. If two notifications have the same priority, the latest one comes first.
+
+For the backend, I created a small Express app in the `notification_app_be` folder. It runs on `http://localhost:3001` and exposes:
+
+GET /api/notifications
+
+It accepts these query parameters:
+
+- limit
+- page
+- notification_type
+
+The backend calls the protected notification API and sends the result to the frontend. It also uses the logging middleware when the request succeeds, when an invalid notification type is passed, and when fetching notifications fails.
+
+I kept the implementation small because this is an evaluation project, not a production notification platform. I did not add routing, complex state management, or extra UI libraries.
