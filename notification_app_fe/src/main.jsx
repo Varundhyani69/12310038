@@ -43,7 +43,7 @@ function sortByPriority(items) {
         if (priority[a.type] !== priority[b.type]) {
             return priority[b.type] - priority[a.type];
         }
-
+        // console.log(items);
         return new Date(b.timestamp) - new Date(a.timestamp);
     });
 }
@@ -116,98 +116,98 @@ function App() {
                     </Typography>
 
                     <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
-                <Button
-                    variant={pageName === "all" ? "contained" : "outlined"}
-                    onClick={() => setPageName("all")}
-                >
-                    All
-                </Button>
-                <Button
-                    variant={pageName === "priority" ? "contained" : "outlined"}
-                    onClick={() => setPageName("priority")}
-                >
-                    Priority
-                </Button>
+                        <Button
+                            variant={pageName === "all" ? "contained" : "outlined"}
+                            onClick={() => setPageName("all")}
+                        >
+                            All
+                        </Button>
+                        <Button
+                            variant={pageName === "priority" ? "contained" : "outlined"}
+                            onClick={() => setPageName("priority")}
+                        >
+                            Priority
+                        </Button>
                     </Stack>
 
                     <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
-                <FormControl size="small" sx={{ minWidth: 150 }}>
-                    <InputLabel>Type</InputLabel>
-                    <Select
-                        value={type}
-                        label="Type"
-                        onChange={(event) => {
-                            setType(event.target.value);
-                            setPage(1);
-                        }}
-                    >
-                        {types.map((item) => (
-                            <MenuItem key={item} value={item}>
-                                {item || "All"}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                        <FormControl size="small" sx={{ minWidth: 150 }}>
+                            <InputLabel>Type</InputLabel>
+                            <Select
+                                value={type}
+                                label="Type"
+                                onChange={(event) => {
+                                    setType(event.target.value);
+                                    setPage(1);
+                                }}
+                            >
+                                {types.map((item) => (
+                                    <MenuItem key={item} value={item}>
+                                        {item || "All"}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
 
-                <TextField
-                        label="Limit"
-                        size="small"
-                        type="number"
-                        min="5"
-                        value={limit}
-                        onChange={(event) => setLimit(event.target.value)}
-                />
+                        <TextField
+                            label="Limit"
+                            size="small"
+                            type="number"
+                            min="5"
+                            value={limit}
+                            onChange={(event) => setLimit(event.target.value)}
+                        />
 
-                <TextField
-                        label="Page"
-                        size="small"
-                        type="number"
-                        min="1"
-                        value={page}
-                        onChange={(event) => setPage(event.target.value)}
-                />
+                        <TextField
+                            label="Page"
+                            size="small"
+                            type="number"
+                            min="1"
+                            value={page}
+                            onChange={(event) => setPage(event.target.value)}
+                        />
                     </Stack>
 
                     {loading && <Typography variant="body2">Loading...</Typography>}
                     {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
                     <Stack spacing={2}>
-                {shownNotifications.map((item) => (
-                    <Card key={item.id} variant="outlined">
-                        <CardContent>
-                            <Box sx={{ mb: 1 }}>
-                                <Chip label={item.type} size="small" sx={{ mr: 1 }} />
-                                <Chip
-                                    label={item.viewed ? "viewed" : "new"}
-                                    size="small"
-                                    color={item.viewed ? "default" : "primary"}
-                                />
-                            </Box>
-                            <Typography>{item.message}</Typography>
-                            <Typography variant="caption" color="text.secondary">
-                                {item.timestamp}
-                            </Typography>
-                            <br />
-                        {!item.viewed && (
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                sx={{ mt: 1 }}
-                                onClick={() => markViewed(item.id)}
-                            >
-                                Mark viewed
-                            </Button>
-                        )}
-                        </CardContent>
-                    </Card>
-                ))}
+                        {shownNotifications.map((item) => (
+                            <Card key={item.id} variant="outlined">
+                                <CardContent>
+                                    <Box sx={{ mb: 1 }}>
+                                        <Chip label={item.type} size="small" sx={{ mr: 1 }} />
+                                        <Chip
+                                            label={item.viewed ? "viewed" : "new"}
+                                            size="small"
+                                            color={item.viewed ? "default" : "primary"}
+                                        />
+                                    </Box>
+                                    <Typography>{item.message}</Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {item.timestamp}
+                                    </Typography>
+                                    <br />
+                                    {!item.viewed && (
+                                        <Button
+                                            size="small"
+                                            variant="outlined"
+                                            sx={{ mt: 1 }}
+                                            onClick={() => markViewed(item.id)}
+                                        >
+                                            Mark viewed
+                                        </Button>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        ))}
                     </Stack>
 
-            {!loading && shownNotifications.length === 0 && (
+                    {!loading && shownNotifications.length === 0 && (
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
                             No notifications found.
                         </Typography>
-            )}
+                    )}
                 </CardContent>
             </Card>
         </Container>
