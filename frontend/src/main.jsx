@@ -35,7 +35,7 @@ function sortByPriority(items) {
         Event: 1
     };
 
-    return [...items].sort((a, b) => {
+    const sorted = [...items].sort((a, b) => {
         if (a.viewed !== b.viewed) {
             return a.viewed - b.viewed;
         }
@@ -43,9 +43,11 @@ function sortByPriority(items) {
         if (priority[a.type] !== priority[b.type]) {
             return priority[b.type] - priority[a.type];
         }
-        // console.log(items);
         return new Date(b.timestamp) - new Date(a.timestamp);
     });
+
+    console.log("sortByPriority output:", sorted);
+    return sorted;
 }
 
 function App() {
